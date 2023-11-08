@@ -2,7 +2,6 @@
   "name": "case-client",
   "version": "0.0.1",
   "description": "CASE Client SDK for the web",
-  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -15,6 +14,7 @@
     "backend",
     "baas",
     "sdk",
+    "js-sdk",
     "client"
   ],
   "author": "CASE",
@@ -22,5 +22,8 @@
   "bugs": {
     "url": "https://github.com/casejs/case-client/issues"
   },
-  "homepage": "https://github.com/casejs/case-client#readme"
+  "homepage": "https://github.com/casejs/case-client#readme",
+  "dependencies": {
+    "axios": "^1.6.0"
+  }
 }
