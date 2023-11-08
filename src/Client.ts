@@ -10,6 +10,11 @@ export default class Client {
   private slug: string
   private headers: AxiosHeaders = new AxiosHeaders()
 
+  /**
+   * Create a new instance of the client.
+   *
+   * @param baseUrl The CASE backend URL address (Without ending slash). Default: http://localhost:4000
+   */
   constructor(baseUrl: string = "http://localhost:4000") {
     this.baseUrl = baseUrl + "/api/dynamic"
     this.authBaseUrl = baseUrl + "/api/auth"
