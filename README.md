@@ -1,2 +1,3 @@
-# case-client
-CASE Client SDK for the web
+# CASE Client
+
+CASE Client SDK for the web.
