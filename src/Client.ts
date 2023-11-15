@@ -120,13 +120,20 @@ export default class Client {
    *
    * Login as any authenticable entity.
    *
-   * @param slug The slug of the entity to login as.
+   * @param entitySlug The slug of the entity to login as.
    * @param email The email of the entity to login as.
    * @param password The password of the entity to login as.
    */
-  async login(slug: string, email: string, password: string): Promise<any> {
+  async login(
+    entitySlug: string,
+    email: string,
+    password: string
+  ): Promise<any> {
     const response: { token: string } = (
-      await axios.post(`${this.authBaseUrl}/${slug}/login`, { email, password })
+      await axios.post(`${this.authBaseUrl}/${entitySlug}/login`, {
+        email,
+        password,
+      })
     ).data
 
     this.headers.set("Authorization", `Bearer ${response.token}`)
@@ -140,5 +147,30 @@ export default class Client {
    */
   logout(): void {
     this.headers.delete("Authorization")
+  }
+
+  /**
+   *
+   * Signup as any authenticable entity but Admin and login.
+   *
+   * @param entitySlug The slug of the entity to signup as.
+   * @param email The email of the entity to signup as.
+   * @param password The password of the entity to signup as.
+   *
+   * @returns void
+   */
+  async signup(
+    entitySlug: string,
+    email: string,
+    password: string
+  ): Promise<any> {
+    const response: { token: string } = (
+      await axios.post(`${this.authBaseUrl}/${entitySlug}/signup`, {
+        email,
+        password,
+      })
+    ).data
+
+    this.headers.set("Authorization", `Bearer ${response.token}`)
   }
 }

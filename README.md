@@ -34,6 +34,9 @@ await cs.from('cats').delete(2)
 // Login as a user (requires having a User authenticable entity).
 await cs.login('users', 'user1@case.app', 'case');
 
+// Sign up.
+await cs.signup('users', 'user1@case.app', 'case');
+
 // Login as an admin.
 await cs.login('admins', 'admin@case.app', 'case')
 
