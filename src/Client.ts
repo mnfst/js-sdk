@@ -6,6 +6,8 @@ export default class Client {
    */
   baseUrl: string
   authBaseUrl: string
+  uploadBaseUrl: string
+  storageBaseUrl: string
 
   private slug: string
   private headers: AxiosHeaders = new AxiosHeaders()
@@ -18,6 +20,8 @@ export default class Client {
   constructor(baseUrl: string = "http://localhost:4000") {
     this.baseUrl = baseUrl + "/api/dynamic"
     this.authBaseUrl = baseUrl + "/api/auth"
+    this.uploadBaseUrl = baseUrl + "/api/upload"
+    this.storageBaseUrl = baseUrl + "/storage"
     this.slug = ""
   }
 
@@ -172,5 +176,28 @@ export default class Client {
     ).data
 
     this.headers.set("Authorization", `Bearer ${response.token}`)
+  }
+
+  /**
+   *
+   * Upload a file to the CASE backend.
+   *
+   * @param file The file to upload.
+   *
+   * @returns The absolute URL of the uploaded file.
+   *
+   */
+  async upload(file: File): Promise<string> {
+    const formData = new FormData()
+    formData.append("file", file)
+    formData.append("propName", this.slug)
+
+    const response: { path: string } = (
+      await axios.post(`${this.uploadBaseUrl}/file`, formData, {
+        headers: this.headers,
+      })
+    ).data
+
+    return this.storageBaseUrl + response.path
   }
 }
