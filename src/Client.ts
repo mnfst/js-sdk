@@ -1,4 +1,5 @@
 import axios, { AxiosHeaders } from "axios"
+import { WhereOperator } from "./enums/where-operator.enum"
 
 export default class Client {
   /**
@@ -11,6 +12,7 @@ export default class Client {
 
   private slug: string
   private headers: AxiosHeaders = new AxiosHeaders()
+  private queryParams: { [key: string]: string } = {}
 
   /**
    * Create a new instance of the client.
@@ -35,6 +37,7 @@ export default class Client {
    */
   from(slug: string): this {
     this.slug = slug
+    this.queryParams = {}
     return this
   }
 
@@ -48,6 +51,7 @@ export default class Client {
     return (
       await axios.get(`${this.baseUrl}/${this.slug}`, {
         headers: this.headers,
+        params: this.queryParams,
       })
     ).data
   }
@@ -65,6 +69,7 @@ export default class Client {
     return (
       await axios.get(`${this.baseUrl}/${this.slug}/${id}`, {
         headers: this.headers,
+        params: this.queryParams,
       })
     ).data
   }
@@ -118,6 +123,48 @@ export default class Client {
         headers: this.headers,
       })
       .then(() => id)
+  }
+
+  /**
+   *
+   * Adds a where clause to the query.
+   *
+   * @param whereClause The where clause to add.
+   *
+   * @returns The current instance of the client.
+   * @example client.from('cats').where('age = 10').find();
+   */
+  where(whereClause: string): this {
+    const whereOperator = Object.values(WhereOperator).find((operator) =>
+      whereClause.includes(operator)
+    )
+
+    if (!whereOperator) {
+      throw new Error(
+        `Invalid where clause. Where clause must include one of the following operators: ${Object.values(
+          WhereOperator
+        ).join(", ")}.`
+      )
+    }
+
+    const [propName, propValue] = whereClause
+      .split(whereOperator)
+      .map((str) => str.trim())
+
+    this.queryParams[propName] = propValue
+
+    // this.queryParams.where = whereClause
+    return this
+  }
+
+  /**
+   *
+   * @param whereClause
+   * @returns The current instance of the client.
+   * @example client.from('cats').andWhere('age = 10').find();
+   */
+  andWhere(whereClause: string): this {
+    return this.where(whereClause)
   }
 
   /**
