@@ -1,5 +1,6 @@
 import axios, { AxiosHeaders } from "axios"
 import { WhereOperator } from "./enums/where-operator.enum"
+import { whereOperatorKeySuffix } from "./recods/where-operator-key-suffix.record"
 
 export default class Client {
   /**
@@ -65,7 +66,7 @@ export default class Client {
    * @example client.from('cats').findOne(1);
    *
    **/
-  async findOne(id: number): Promise<any> {
+  async findOneById(id: number): Promise<any> {
     return (
       await axios.get(`${this.baseUrl}/${this.slug}/${id}`, {
         headers: this.headers,
@@ -90,7 +91,7 @@ export default class Client {
 
     const createdItemId: number = response.identifiers[0].id
 
-    return this.findOne(createdItemId)
+    return this.findOneById(createdItemId)
   }
 
   /**
@@ -106,7 +107,7 @@ export default class Client {
       headers: this.headers,
     })
 
-    return this.findOne(id)
+    return this.findOneById(id)
   }
 
   /**
@@ -135,9 +136,9 @@ export default class Client {
    * @example client.from('cats').where('age = 10').find();
    */
   where(whereClause: string): this {
-    const whereOperator = Object.values(WhereOperator).find((operator) =>
-      whereClause.includes(operator)
-    )
+    const whereOperator: WhereOperator = Object.values(WhereOperator).find(
+      (operator) => whereClause.includes(operator)
+    ) as WhereOperator
 
     if (!whereOperator) {
       throw new Error(
@@ -151,7 +152,8 @@ export default class Client {
       .split(whereOperator)
       .map((str) => str.trim())
 
-    this.queryParams[propName] = propValue
+    const suffix: string = whereOperatorKeySuffix[whereOperator]
+    this.queryParams[propName + suffix] = propValue
 
     // this.queryParams.where = whereClause
     return this
