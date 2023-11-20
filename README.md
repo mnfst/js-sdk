@@ -42,4 +42,15 @@ await cs.login('admins', 'admin@case.app', 'case')
 
 // Logout.
 await cs.logout()
+
+// Upload file
+const file: File = new File([blob], 'demoFile.txt', {
+  type: 'text/plain',
+});
+
+const fileUrl: string = await client.from('cats').addFile(file);
+
+// Upload an image.
+const imageSizes: {[key:string]: string} = await client.from('cats').addImage('avatar', imageFile); // {small: "http://localhost:4000/image-small.jpg", large: 'http://localhost:4000/image-large.jpg"}
+
 ```

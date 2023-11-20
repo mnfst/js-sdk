@@ -127,6 +127,8 @@ export default class Client {
    * @param entitySlug The slug of the entity to login as.
    * @param email The email of the entity to login as.
    * @param password The password of the entity to login as.
+   *
+   * @returns Promise<void>
    */
   async login(
     entitySlug: string,
@@ -154,7 +156,6 @@ export default class Client {
   }
 
   /**
-   *
    * Signup as any authenticable entity but Admin and login.
    *
    * @param entitySlug The slug of the entity to signup as.
@@ -180,17 +181,17 @@ export default class Client {
 
   /**
    *
-   * Upload a file to the CASE backend.
+   * Adds a file to the CASE backend.
    *
    * @param file The file to upload.
    *
    * @returns The absolute URL of the uploaded file.
    *
    */
-  async upload(file: File): Promise<string> {
+  async addFile(file: File): Promise<string> {
     const formData = new FormData()
     formData.append("file", file)
-    formData.append("propName", this.slug)
+    formData.append("entitySlug", this.slug)
 
     const response: { path: string } = (
       await axios.post(`${this.uploadBaseUrl}/file`, formData, {
@@ -199,5 +200,37 @@ export default class Client {
     ).data
 
     return this.storageBaseUrl + response.path
+  }
+
+  /**
+   * Adds an image to the CASE backend.
+   *
+   * @param propName The property name for witch the image is added.
+   * @param image The image to upload.
+   *
+   * @returns an object containing the absolute URLs of the sizes of the uploaded image.
+   */
+  async addImage(
+    propName: string,
+    image: File
+  ): Promise<{ [key: string]: string }> {
+    const formData = new FormData()
+    formData.append("image", image)
+    formData.append("entitySlug", this.slug)
+    formData.append("propName", propName)
+
+    const response: { [key: string]: string } = (
+      await axios.post(`${this.uploadBaseUrl}/image`, formData, {
+        headers: this.headers,
+      })
+    ).data
+
+    return Object.keys(response).reduce(
+      (acc: { [key: string]: string }, key: string) => {
+        acc[key] = this.storageBaseUrl + response[key]
+        return acc
+      },
+      {}
+    )
   }
 }
