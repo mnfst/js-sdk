@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/casejs/case-client#readme",
   "dependencies": {
+    "@casejs/types": "^0.0.5",
     "axios": "^1.6.0"
   }
 }

@@ -1,6 +1,5 @@
+import { WhereOperator, whereOperatorKeySuffix } from "@casejs/types"
 import axios, { AxiosHeaders } from "axios"
-import { WhereOperator } from "./enums/where-operator.enum"
-import { whereOperatorKeySuffix } from "./recods/where-operator-key-suffix.record"
 
 export default class Client {
   /**
@@ -42,7 +41,7 @@ export default class Client {
     return this
   }
 
-  // TODO: Paginator typing from @casejs/case.
+  // TODO: Paginator typing from @casejs/types.
   /**
    * Get the list of items of the entity.
    *
@@ -101,6 +100,7 @@ export default class Client {
    * @param itemDto The DTO of the item to update.
    *
    * @returns The updated item.
+   * @example client.from('cats').update(1, { name: 'updated name' });
    */
   async update(id: number, itemDto: any): Promise<any> {
     await axios.put(`${this.baseUrl}/${this.slug}/${id}`, itemDto, {
@@ -117,6 +117,7 @@ export default class Client {
    * @param id The id of the item to delete.
    *
    * @returns The id of the deleted item.
+   * @example client.from('cats').delete(1);
    */
   async delete(id: number): Promise<void> {
     await axios
@@ -136,9 +137,12 @@ export default class Client {
    * @example client.from('cats').where('age = 10').find();
    */
   where(whereClause: string): this {
-    const whereOperator: WhereOperator = Object.values(WhereOperator).find(
-      (operator) => whereClause.includes(operator)
-    ) as WhereOperator
+    // Check if the where clause includes one of the available operators (between spaces). We reverse array as some operators are substrings of others (ex: >= and >).
+    const whereOperator: WhereOperator = Object.values(WhereOperator)
+      .reverse()
+      .find((operator) =>
+        whereClause.includes(` ${operator} `)
+      ) as WhereOperator
 
     if (!whereOperator) {
       throw new Error(
@@ -155,11 +159,11 @@ export default class Client {
     const suffix: string = whereOperatorKeySuffix[whereOperator]
     this.queryParams[propName + suffix] = propValue
 
-    // this.queryParams.where = whereClause
     return this
   }
 
   /**
+   * Adds a where clause to the query.
    *
    * @param whereClause
    * @returns The current instance of the client.
