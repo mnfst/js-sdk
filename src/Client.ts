@@ -1,4 +1,4 @@
-import { WhereOperator, whereOperatorKeySuffix } from "@casejs/types"
+import { Paginator, WhereOperator, whereOperatorKeySuffix } from "@casejs/types"
 import axios, { AxiosHeaders } from "axios"
 
 export default class Client {
@@ -41,19 +41,53 @@ export default class Client {
     return this
   }
 
-  // TODO: Paginator typing from @casejs/types.
   /**
    * Get the list of items of the entity.
    *
-   * @returns The list of items of the entity.
+   * @returns An array of items of the entity.
    */
-  async find(): Promise<any> {
-    return (
-      await axios.get(`${this.baseUrl}/${this.slug}`, {
-        headers: this.headers,
-        params: this.queryParams,
-      })
-    ).data
+  async find<T>(): Promise<T[]>
+
+  /**
+   * Get the paginated list of items of the entity.
+   *
+   * @param paginationParams The pagination parameters.
+   *
+   * @returns A paginator of items of the entity.
+   */
+  async find<T>(paginationParams: {
+    page?: number
+    perPage?: number
+  }): Promise<Paginator<T>>
+
+  /**
+   * Implementation of the `find` function that can either fetch all entities of type T
+   * or fetch them with pagination based on the provided arguments.
+   *
+   * @param paginationParams - Optional pagination parameters. If provided, the function
+   *                           returns a paginated result, otherwise returns all entities.
+   * @returns A Promise that resolves to either an array of entities of type T
+   *          or a Paginator object containing entities of type T, based on the input.
+   */
+  async find<T>(paginationParams?: {
+    page?: number
+    perPage?: number
+  }): Promise<T[] | Paginator<T>> {
+    if (paginationParams) {
+      return (
+        await axios.get(`${this.baseUrl}/${this.slug}`, {
+          headers: this.headers,
+          params: { ...this.queryParams, ...paginationParams },
+        })
+      ).data
+    } else {
+      return (
+        await axios.get(`${this.baseUrl}/${this.slug}`, {
+          headers: this.headers,
+          params: this.queryParams,
+        })
+      ).data
+    }
   }
 
   /**
@@ -65,7 +99,7 @@ export default class Client {
    * @example client.from('cats').findOne(1);
    *
    **/
-  async findOneById(id: number): Promise<any> {
+  async findOneById<T>(id: number): Promise<T> {
     return (
       await axios.get(`${this.baseUrl}/${this.slug}/${id}`, {
         headers: this.headers,
@@ -81,7 +115,7 @@ export default class Client {
    *
    * @returns The created item.
    */
-  async create(itemDto: any): Promise<any> {
+  async create<T>(itemDto: any): Promise<T> {
     const response: any = (
       await axios.post(`${this.baseUrl}/${this.slug}`, itemDto, {
         headers: this.headers,
@@ -102,7 +136,7 @@ export default class Client {
    * @returns The updated item.
    * @example client.from('cats').update(1, { name: 'updated name' });
    */
-  async update(id: number, itemDto: any): Promise<any> {
+  async update<T>(id: number, itemDto: any): Promise<T> {
     await axios.put(`${this.baseUrl}/${this.slug}/${id}`, itemDto, {
       headers: this.headers,
     })
