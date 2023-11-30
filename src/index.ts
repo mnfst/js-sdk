@@ -1,3 +1,3 @@
-import Client from "./Client";
+import CaseClient from "./CaseClient"
 
-export default Client;
+export default CaseClient

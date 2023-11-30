@@ -1,7 +1,7 @@
-import { Paginator, WhereOperator, whereOperatorKeySuffix } from "@casejs/types"
-import axios, { AxiosHeaders } from "axios"
+import { Paginator, WhereOperator, whereOperatorKeySuffix } from '@casejs/types'
+import axios, { AxiosHeaders } from 'axios'
 
-export default class Client {
+export default class CaseClient {
   /**
    * The CASE backend URL address (Without ending slash).
    */
@@ -19,12 +19,12 @@ export default class Client {
    *
    * @param baseUrl The CASE backend URL address (Without ending slash). Default: http://localhost:4000
    */
-  constructor(baseUrl: string = "http://localhost:4000") {
-    this.baseUrl = baseUrl + "/api/dynamic"
-    this.authBaseUrl = baseUrl + "/api/auth"
-    this.uploadBaseUrl = baseUrl + "/api/upload"
-    this.storageBaseUrl = baseUrl + "/storage"
-    this.slug = ""
+  constructor(baseUrl: string = 'http://localhost:4000') {
+    this.baseUrl = baseUrl + '/api/dynamic'
+    this.authBaseUrl = baseUrl + '/api/auth'
+    this.uploadBaseUrl = baseUrl + '/api/upload'
+    this.storageBaseUrl = baseUrl + '/storage'
+    this.slug = ''
   }
 
   /**
@@ -182,7 +182,7 @@ export default class Client {
       throw new Error(
         `Invalid where clause. Where clause must include one of the following operators: ${Object.values(
           WhereOperator
-        ).join(", ")}.`
+        ).join(', ')}.`
       )
     }
 
@@ -208,6 +208,22 @@ export default class Client {
   }
 
   /**
+   * Adds an order by clause to the query.
+   *
+   * @param propName The property name to order by.
+   * @param order The order of the property (ASC or DESC). Default ASC
+   *
+   * @returns The current instance of the client.
+   * @example client.from('cats').orderBy('age', { desc: true }).find();
+   */
+  orderBy(propName: string, order?: { desc: boolean }): this {
+    this.queryParams['orderBy'] = propName
+    this.queryParams['order'] = order?.desc ? 'DESC' : 'ASC'
+
+    return this
+  }
+
+  /**
    *
    * Login as any authenticable entity.
    *
@@ -229,7 +245,7 @@ export default class Client {
       })
     ).data
 
-    this.headers.set("Authorization", `Bearer ${response.token}`)
+    this.headers.set('Authorization', `Bearer ${response.token}`)
   }
 
   /**
@@ -239,7 +255,7 @@ export default class Client {
    * @returns void
    */
   logout(): void {
-    this.headers.delete("Authorization")
+    this.headers.delete('Authorization')
   }
 
   /**
@@ -263,7 +279,7 @@ export default class Client {
       })
     ).data
 
-    this.headers.set("Authorization", `Bearer ${response.token}`)
+    this.headers.set('Authorization', `Bearer ${response.token}`)
   }
 
   /**
@@ -277,8 +293,8 @@ export default class Client {
    */
   async addFile(file: File): Promise<string> {
     const formData = new FormData()
-    formData.append("file", file)
-    formData.append("entitySlug", this.slug)
+    formData.append('file', file)
+    formData.append('entitySlug', this.slug)
 
     const response: { path: string } = (
       await axios.post(`${this.uploadBaseUrl}/file`, formData, {
@@ -302,9 +318,9 @@ export default class Client {
     image: File
   ): Promise<{ [key: string]: string }> {
     const formData = new FormData()
-    formData.append("image", image)
-    formData.append("entitySlug", this.slug)
-    formData.append("propName", propName)
+    formData.append('image', image)
+    formData.append('entitySlug', this.slug)
+    formData.append('propName', propName)
 
     const response: { [key: string]: string } = (
       await axios.post(`${this.uploadBaseUrl}/image`, formData, {
