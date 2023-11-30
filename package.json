@@ -1,7 +1,8 @@
 {
-  "name": "case-client",
-  "version": "0.0.1",
+  "name": "@casejs/case-client",
+  "version": "0.0.9",
   "description": "CASE Client SDK for the web",
+  "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
