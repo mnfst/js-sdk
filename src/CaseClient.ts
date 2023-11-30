@@ -224,6 +224,20 @@ export default class CaseClient {
   }
 
   /**
+   * Loads the relations of the entity.
+   *
+   * @param relations The relations to load.
+   *
+   * @returns The current instance of the client.
+   * @example client.from('cats').with(['owner', 'owner.company']).find();
+   */
+  with(relations: string[]): this {
+    this.queryParams['relations'] = relations.join(',')
+
+    return this
+  }
+
+  /**
    *
    * Login as any authenticable entity.
    *
