@@ -1,9 +1,10 @@
 {
-  "name": "case-client",
-  "version": "0.0.1",
+  "name": "@casejs/case-client",
+  "version": "1.0.0",
   "description": "CASE Client SDK for the web",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
+    "build": "rm -rf dist && tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -12,15 +13,33 @@
   },
   "keywords": [
     "case",
+    "casejs",
     "backend",
     "baas",
     "sdk",
-    "client"
+    "js-sdk",
+    "client",
+    "rest api",
+    "auth",
+    "fetch",
+    "filter",
+    "query",
+    "create",
+    "update",
+    "delete",
+    "get",
+    "list",
+    "count",
+    "crud"
   ],
   "author": "CASE",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/casejs/case-client/issues"
   },
-  "homepage": "https://github.com/casejs/case-client#readme"
+  "homepage": "https://github.com/casejs/case-client#readme",
+  "dependencies": {
+    "@casejs/types": "^0.0.5",
+    "axios": "^1.6.0"
+  }
 }
