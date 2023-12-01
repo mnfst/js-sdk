@@ -1,6 +1,6 @@
 {
   "name": "@casejs/case-client",
-  "version": "0.9.1",
+  "version": "1.0.0",
   "description": "CASE Client SDK for the web",
   "main": "dist/index.js",
   "scripts": {
@@ -13,11 +13,24 @@
   },
   "keywords": [
     "case",
+    "casejs",
     "backend",
     "baas",
     "sdk",
     "js-sdk",
-    "client"
+    "client",
+    "rest api",
+    "auth",
+    "fetch",
+    "filter",
+    "query",
+    "create",
+    "update",
+    "delete",
+    "get",
+    "list",
+    "count",
+    "crud"
   ],
   "author": "CASE",
   "license": "MIT",
