@@ -2,6 +2,7 @@
 
 CASE Client SDK for the web.
 
+- Website: https://case.app
 - Documentation: https://docs.case.app
 
 ## Usage
@@ -15,7 +16,7 @@ npm i @casejs/client
 Use it in your project:
 
 ```js
-import Client from @casejs/client
+import Client from @casejs/case-client
 
 // Initialize client.
 const cs = new Client()
