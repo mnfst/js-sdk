@@ -1,6 +1,6 @@
 {
   "name": "@casejs/case-client",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "CASE Client SDK for the web",
   "main": "dist/index.js",
   "scripts": {
@@ -45,6 +45,9 @@
   "homepage": "https://github.com/casejs/case-client#readme",
   "dependencies": {
     "@casejs/types": "^0.0.5",
-    "axios": "^1.6.0"
+    "node-fetch": "^2.7.0"
+  },
+  "devDependencies": {
+    "@types/node-fetch": "^2.6.9"
   }
 }
