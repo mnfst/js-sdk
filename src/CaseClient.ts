@@ -1,5 +1,5 @@
 import { Paginator, WhereOperator, whereOperatorKeySuffix } from '@casejs/types'
-import axios, { AxiosHeaders } from 'axios'
+import axios from 'axios'
 
 export default class CaseClient {
   /**
@@ -11,7 +11,7 @@ export default class CaseClient {
   storageBaseUrl: string
 
   private slug: string
-  private headers: AxiosHeaders = new AxiosHeaders()
+  private headers: Record<string, string> = {}
   private queryParams: { [key: string]: string } = {}
 
   /**
@@ -259,7 +259,7 @@ export default class CaseClient {
       })
     ).data
 
-    this.headers.set('Authorization', `Bearer ${response.token}`)
+    this.headers['Authorization'] = `Bearer ${response.token}`
   }
 
   /**
@@ -269,7 +269,7 @@ export default class CaseClient {
    * @returns void
    */
   logout(): void {
-    this.headers.delete('Authorization')
+    delete this.headers['Authorization']
   }
 
   /**
@@ -293,7 +293,7 @@ export default class CaseClient {
       })
     ).data
 
-    this.headers.set('Authorization', `Bearer ${response.token}`)
+    this.headers['Authorization'] = `Bearer ${response.token}`
   }
 
   /**

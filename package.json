@@ -7,6 +7,11 @@
     "build": "rm -rf dist && tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/casejs/case-client.git"
