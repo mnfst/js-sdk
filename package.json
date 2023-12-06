@@ -1,6 +1,6 @@
 {
   "name": "@casejs/case-client",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "CASE Client SDK for the web",
   "main": "dist/index.js",
   "scripts": {
@@ -44,7 +44,6 @@
   },
   "homepage": "https://github.com/casejs/case-client#readme",
   "dependencies": {
-    "@casejs/types": "^0.0.5",
-    "axios": "^1.6.0"
+    "@casejs/types": "^0.0.5"
   }
 }
