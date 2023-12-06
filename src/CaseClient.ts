@@ -1,5 +1,4 @@
 import { Paginator, WhereOperator, whereOperatorKeySuffix } from '@casejs/types'
-import axios from 'axios'
 
 export default class CaseClient {
   /**
@@ -69,24 +68,27 @@ export default class CaseClient {
    * @returns A Promise that resolves to either an array of entities of type T
    *          or a Paginator object containing entities of type T, based on the input.
    */
-  async find<T>(paginationParams?: {
+  find<T>(paginationParams?: {
     page?: number
     perPage?: number
   }): Promise<T[] | Paginator<T>> {
     if (paginationParams) {
-      return (
-        await axios.get(`${this.baseUrl}/${this.slug}`, {
-          headers: this.headers,
-          params: { ...this.queryParams, ...paginationParams },
-        })
-      ).data
+      return fetch(`${this.baseUrl}/${this.slug}`, {
+        headers: this.headers,
+        method: 'GET',
+        body: JSON.stringify({
+          ...this.queryParams,
+          ...paginationParams,
+        }),
+      }).then((res) => res.json())
     } else {
-      return (
-        await axios.get(`${this.baseUrl}/${this.slug}`, {
-          headers: this.headers,
-          params: this.queryParams,
-        })
-      ).data
+      return fetch(`${this.baseUrl}/${this.slug}`, {
+        headers: this.headers,
+        method: 'GET',
+        body: JSON.stringify({
+          ...this.queryParams,
+        }),
+      }).then((res) => res.json())
     }
   }
 
@@ -99,13 +101,11 @@ export default class CaseClient {
    * @example client.from('cats').findOne(1);
    *
    **/
-  async findOneById<T>(id: number): Promise<T> {
-    return (
-      await axios.get(`${this.baseUrl}/${this.slug}/${id}`, {
-        headers: this.headers,
-        params: this.queryParams,
-      })
-    ).data
+  findOneById<T>(id: number): Promise<T> {
+    return fetch(`${this.baseUrl}/${this.slug}/${id}`, {
+      headers: this.headers,
+      method: 'GET',
+    }).then((res) => res.json())
   }
 
   /**
@@ -116,11 +116,11 @@ export default class CaseClient {
    * @returns The created item.
    */
   async create<T>(itemDto: any): Promise<T> {
-    const response: any = (
-      await axios.post(`${this.baseUrl}/${this.slug}`, itemDto, {
-        headers: this.headers,
-      })
-    ).data
+    const response = await fetch(`${this.baseUrl}/${this.slug}`, {
+      headers: this.headers,
+      method: 'POST',
+      body: JSON.stringify(itemDto),
+    }).then((res) => res.json())
 
     const createdItemId: number = response.identifiers[0].id
 
@@ -137,9 +137,11 @@ export default class CaseClient {
    * @example client.from('cats').update(1, { name: 'updated name' });
    */
   async update<T>(id: number, itemDto: any): Promise<T> {
-    await axios.put(`${this.baseUrl}/${this.slug}/${id}`, itemDto, {
+    await fetch(`${this.baseUrl}/${this.slug}/${id}`, {
       headers: this.headers,
-    })
+      method: 'PUT',
+      body: JSON.stringify(itemDto),
+    }).then((res) => res.json())
 
     return this.findOneById(id)
   }
@@ -153,12 +155,11 @@ export default class CaseClient {
    * @returns The id of the deleted item.
    * @example client.from('cats').delete(1);
    */
-  async delete(id: number): Promise<void> {
-    await axios
-      .delete(`${this.baseUrl}/${this.slug}/${id}`, {
-        headers: this.headers,
-      })
-      .then(() => id)
+  delete(id: number): Promise<number> {
+    return fetch(`${this.baseUrl}/${this.slug}/${id}`, {
+      headers: this.headers,
+      method: 'DELETE',
+    }).then(() => id)
   }
 
   /**
@@ -252,12 +253,16 @@ export default class CaseClient {
     email: string,
     password: string
   ): Promise<any> {
-    const response: { token: string } = (
-      await axios.post(`${this.authBaseUrl}/${entitySlug}/login`, {
-        email,
-        password,
-      })
-    ).data
+    const response: { token: string } = await fetch(
+      `${this.authBaseUrl}/${entitySlug}/login`,
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      }
+    ).then((res) => res.json())
 
     this.headers['Authorization'] = `Bearer ${response.token}`
   }
@@ -286,12 +291,16 @@ export default class CaseClient {
     email: string,
     password: string
   ): Promise<any> {
-    const response: { token: string } = (
-      await axios.post(`${this.authBaseUrl}/${entitySlug}/signup`, {
-        email,
-        password,
-      })
-    ).data
+    const response: { token: string } = await fetch(
+      `${this.authBaseUrl}/${entitySlug}/signup`,
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      }
+    ).then((res) => res.json())
 
     this.headers['Authorization'] = `Bearer ${response.token}`
   }
@@ -310,11 +319,13 @@ export default class CaseClient {
     formData.append('file', file)
     formData.append('entitySlug', this.slug)
 
-    const response: { path: string } = (
-      await axios.post(`${this.uploadBaseUrl}/file`, formData, {
-        headers: this.headers,
-      })
-    ).data
+    const response: { path: string } = await fetch(
+      `${this.uploadBaseUrl}/file`,
+      {
+        method: 'POST',
+        body: formData,
+      }
+    ).then((res) => res.json())
 
     return this.storageBaseUrl + response.path
   }
@@ -336,11 +347,13 @@ export default class CaseClient {
     formData.append('entitySlug', this.slug)
     formData.append('propName', propName)
 
-    const response: { [key: string]: string } = (
-      await axios.post(`${this.uploadBaseUrl}/image`, formData, {
-        headers: this.headers,
-      })
-    ).data
+    const response: { [key: string]: string } = await fetch(
+      `${this.uploadBaseUrl}/image`,
+      {
+        method: 'POST',
+        body: formData,
+      }
+    ).then((res) => res.json())
 
     return Object.keys(response).reduce(
       (acc: { [key: string]: string }, key: string) => {
