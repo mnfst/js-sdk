@@ -73,22 +73,27 @@ export default class CaseClient {
     perPage?: number
   }): Promise<T[] | Paginator<T>> {
     if (paginationParams) {
-      return fetch(`${this.baseUrl}/${this.slug}`, {
-        headers: this.headers,
-        method: 'GET',
-        body: JSON.stringify({
+      return fetch(
+        this.buildUrlWithQueryParams(`${this.baseUrl}/${this.slug}`, {
           ...this.queryParams,
           ...paginationParams,
         }),
-      }).then((res) => res.json())
+        {
+          headers: this.headers,
+          method: 'GET',
+        }
+      ).then((res) => res.json())
     } else {
-      return fetch(`${this.baseUrl}/${this.slug}`, {
-        headers: this.headers,
-        method: 'GET',
-        body: JSON.stringify({
-          ...this.queryParams,
-        }),
-      }).then((res) => res.json())
+      return fetch(
+        this.buildUrlWithQueryParams(
+          `${this.baseUrl}/${this.slug}`,
+          this.queryParams
+        ),
+        {
+          headers: this.headers,
+          method: 'GET',
+        }
+      ).then((res) => res.json())
     }
   }
 
@@ -362,5 +367,18 @@ export default class CaseClient {
       },
       {}
     )
+  }
+
+  private buildUrlWithQueryParams(
+    baseUrl: string,
+    queryParams: Record<string, string | number | boolean>
+  ): string {
+    const url = new URL(baseUrl)
+    Object.entries(queryParams).forEach(([key, value]) => {
+      if (value !== null && value !== undefined) {
+        url.searchParams.append(key, value.toString())
+      }
+    })
+    return url.toString()
   }
 }
