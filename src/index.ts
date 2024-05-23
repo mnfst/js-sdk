@@ -1,4 +1,4 @@
-import CaseClient from './CaseClient'
+import Manifest from './Manifest'
 
 import fetch from 'node-fetch'
 
@@ -7,4 +7,4 @@ if (!globalThis.fetch) {
   globalThis.fetch = fetch as any
 }
 
-export default CaseClient
+export default Manifest

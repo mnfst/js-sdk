@@ -1,23 +1,23 @@
-# CASE Client
+# Manifest Javascript SDK
 
-CASE Client SDK for the web.
-
-- Website: https://case.app
-- Documentation: https://docs.case.app
+- Website: https://manifest.build
+- Documentation: https://manifest.build/docs
 
 ## Usage
 
 Install the SDK:
 
 ```bash
-npm i @casejs/client
+npm i @mnfst/sdk
 ```
 
 Use it in your project:
 
 ```js
-import Client from @casejs/case-client
+import Manifest from @mnfst/sdk
 
 // Initialize client.
-const cs = new Client()
+const manifest = new Manifest()
 ```
+
+See the [Manifest JS SDK doc](https://manifest.build/docs/javascript-sdk)
