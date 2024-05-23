@@ -10,7 +10,9 @@ export default class CaseClient {
   storageBaseUrl: string
 
   private slug: string
-  private headers: Record<string, string> = {}
+  private headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  }
   private queryParams: { [key: string]: string } = {}
 
   /**

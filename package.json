@@ -1,6 +1,6 @@
 {
   "name": "@casejs/case-client",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "CASE Client SDK for the web",
   "main": "dist/index.js",
   "scripts": {
