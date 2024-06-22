@@ -1,15 +1,17 @@
 {
-  "name": "@casejs/case-client",
-  "version": "1.0.4",
-  "description": "CASE Client SDK for the web",
+  "name": "@mnfst/sdk",
+  "version": "0.1.0-alpha.1",
+  "description": "Manifest Javascript SDK",
+  "author": "Manifest",
+  "homepage": "https://manifest.build",
+  "license": "MIT",
   "main": "dist/index.js",
   "scripts": {
     "build": "rm -rf dist && tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "files": [
-    "dist",
-    "README.md",
+    "dist/",
     "LICENSE"
   ],
   "repository": {
@@ -17,8 +19,7 @@
     "url": "git+https://github.com/casejs/case-client.git"
   },
   "keywords": [
-    "case",
-    "casejs",
+    "manifest",
     "backend",
     "baas",
     "sdk",
@@ -37,14 +38,11 @@
     "count",
     "crud"
   ],
-  "author": "CASE",
-  "license": "MIT",
   "bugs": {
     "url": "https://github.com/casejs/case-client/issues"
   },
-  "homepage": "https://github.com/casejs/case-client#readme",
   "dependencies": {
-    "@casejs/types": "^0.0.5",
+    "@mnfst/types": "^0.1.0-alpha.2",
     "node-fetch": "^2.7.0"
   },
   "devDependencies": {

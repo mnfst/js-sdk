@@ -1,13 +1,12 @@
-import { Paginator, WhereOperator, whereOperatorKeySuffix } from '@casejs/types'
+import { Paginator, WhereOperator, whereOperatorKeySuffix } from '@mnfst/types'
 
-export default class CaseClient {
+export default class Manifest {
   /**
-   * The CASE backend URL address (Without ending slash).
+   * The Manifest backend base URL (Without ending slash).
    */
   baseUrl: string
+
   authBaseUrl: string
-  uploadBaseUrl: string
-  storageBaseUrl: string
 
   private slug: string
   private headers: Record<string, string> = {
@@ -18,13 +17,11 @@ export default class CaseClient {
   /**
    * Create a new instance of the client.
    *
-   * @param baseUrl The CASE backend URL address (Without ending slash). Default: http://localhost:4000
+   * @param baseUrl The Manifest backend URL address (Without ending slash). Default: http://localhost:4000
    */
-  constructor(baseUrl: string = 'http://localhost:4000') {
+  constructor(baseUrl: string = 'http://localhost:1111') {
     this.baseUrl = baseUrl + '/api/dynamic'
     this.authBaseUrl = baseUrl + '/api/auth'
-    this.uploadBaseUrl = baseUrl + '/api/upload'
-    this.storageBaseUrl = baseUrl + '/storage'
     this.slug = ''
   }
 
@@ -310,65 +307,6 @@ export default class CaseClient {
     ).then((res) => res.json())
 
     this.headers['Authorization'] = `Bearer ${response.token}`
-  }
-
-  /**
-   *
-   * Adds a file to the CASE backend.
-   *
-   * @param file The file to upload.
-   *
-   * @returns The absolute URL of the uploaded file.
-   *
-   */
-  async addFile(file: File): Promise<string> {
-    const formData = new FormData()
-    formData.append('file', file)
-    formData.append('entitySlug', this.slug)
-
-    const response: { path: string } = await fetch(
-      `${this.uploadBaseUrl}/file`,
-      {
-        method: 'POST',
-        body: formData,
-      }
-    ).then((res) => res.json())
-
-    return this.storageBaseUrl + response.path
-  }
-
-  /**
-   * Adds an image to the CASE backend.
-   *
-   * @param propName The property name for witch the image is added.
-   * @param image The image to upload.
-   *
-   * @returns an object containing the absolute URLs of the sizes of the uploaded image.
-   */
-  async addImage(
-    propName: string,
-    image: File
-  ): Promise<{ [key: string]: string }> {
-    const formData = new FormData()
-    formData.append('image', image)
-    formData.append('entitySlug', this.slug)
-    formData.append('propName', propName)
-
-    const response: { [key: string]: string } = await fetch(
-      `${this.uploadBaseUrl}/image`,
-      {
-        method: 'POST',
-        body: formData,
-      }
-    ).then((res) => res.json())
-
-    return Object.keys(response).reduce(
-      (acc: { [key: string]: string }, key: string) => {
-        acc[key] = this.storageBaseUrl + response[key]
-        return acc
-      },
-      {}
-    )
   }
 
   private buildUrlWithQueryParams(
