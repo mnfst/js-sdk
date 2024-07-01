@@ -49,7 +49,7 @@ export default class Manifest {
   find<T>(paginationParams?: {
     page?: number
     perPage?: number
-  }): Promise<T[] | Paginator<T>> {
+  }): Promise<Paginator<T>> {
     if (paginationParams) {
       return fetch(
         this.buildUrlWithQueryParams(`${this.baseUrl}/${this.slug}`, {
