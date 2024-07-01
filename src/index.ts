@@ -1,4 +1,4 @@
-import Manifest from './Manifest'
+import Manifest from './Manifest.js'
 
 import fetch from 'node-fetch'
 
