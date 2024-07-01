@@ -17,7 +17,7 @@ export default class Manifest {
   /**
    * Create a new instance of the client.
    *
-   * @param baseUrl The Manifest backend URL address (Without ending slash). Default: http://localhost:4000
+   * @param baseUrl The Manifest backend URL address (Without ending slash). Default: http://localhost:1111
    */
   constructor(baseUrl: string = 'http://localhost:1111') {
     this.baseUrl = baseUrl + '/api/dynamic'
@@ -40,32 +40,11 @@ export default class Manifest {
   }
 
   /**
-   * Get the list of items of the entity.
-   *
-   * @returns An array of items of the entity.
-   */
-  async find<T>(): Promise<T[]>
-
-  /**
    * Get the paginated list of items of the entity.
-   *
-   * @param paginationParams The pagination parameters.
-   *
-   * @returns A paginator of items of the entity.
-   */
-  async find<T>(paginationParams: {
-    page?: number
-    perPage?: number
-  }): Promise<Paginator<T>>
-
-  /**
-   * Implementation of the `find` function that can either fetch all entities of type T
-   * or fetch them with pagination based on the provided arguments.
    *
    * @param paginationParams - Optional pagination parameters. If provided, the function
    *                           returns a paginated result, otherwise returns all entities.
-   * @returns A Promise that resolves to either an array of entities of type T
-   *          or a Paginator object containing entities of type T, based on the input.
+   * @returns A Promise that resolves a Paginator object containing entities of type T, based on the input.
    */
   find<T>(paginationParams?: {
     page?: number
