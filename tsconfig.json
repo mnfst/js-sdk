@@ -1,15 +1,16 @@
 {
   "compilerOptions": {
-    "outDir": "./dist/",
-    "lib": ["dom", "esnext"],
-    "target": "es2016",
     "module": "ESNext",
+    "target": "es2016",
+    "outDir": "./dist/",
     "moduleResolution": "node",
-    "declaration": true,
     "esModuleInterop": true,
+    "lib": ["dom", "esnext"],
+    "declaration": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "skipLibCheck": true
   },
-  "exclude": ["tests"]
+  "include": ["src"],
+  "exclude": ["node_modules", "example"]
 }

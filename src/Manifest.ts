@@ -46,7 +46,7 @@ export default class Manifest {
    *                           returns a paginated result, otherwise returns all entities.
    * @returns A Promise that resolves a Paginator object containing entities of type T, based on the input.
    */
-  find<T>(paginationParams?: {
+  async find<T>(paginationParams?: {
     page?: number
     perPage?: number
   }): Promise<Paginator<T>> {
@@ -84,7 +84,9 @@ export default class Manifest {
    * @example client.from('cats').findOne(1);
    *
    **/
-  findOneById<T>(id: number): Promise<T> {
+  async findOneById<T>(id: number): Promise<T> {
+    console.log(`${this.baseUrl}/${this.slug}/${id}`)
+
     return fetch(`${this.baseUrl}/${this.slug}/${id}`, {
       headers: this.headers,
       method: 'GET',
@@ -138,7 +140,7 @@ export default class Manifest {
    * @returns The id of the deleted item.
    * @example client.from('cats').delete(1);
    */
-  delete(id: number): Promise<number> {
+  async delete(id: number): Promise<number> {
     return fetch(`${this.baseUrl}/${this.slug}/${id}`, {
       headers: this.headers,
       method: 'DELETE',
