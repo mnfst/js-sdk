@@ -229,13 +229,13 @@ export default class Manifest {
    * @param email The email of the entity to login as.
    * @param password The password of the entity to login as.
    *
-   * @returns Promise<void>
+   * @returns true if the login was successful.
    */
   async login(
     entitySlug: string,
     email: string,
     password: string
-  ): Promise<any> {
+  ): Promise<boolean> {
     const response: { token: string } = await fetch(
       `${this.authBaseUrl}/${entitySlug}/login`,
       {
@@ -248,6 +248,8 @@ export default class Manifest {
     ).then((res) => res.json())
 
     this.headers['Authorization'] = `Bearer ${response.token}`
+
+    return true
   }
 
   /**
@@ -267,7 +269,7 @@ export default class Manifest {
    * @param email The email of the entity to signup as.
    * @param password The password of the entity to signup as.
    *
-   * @returns void
+   * @returns true if the signup was successful.
    */
   async signup(
     entitySlug: string,
@@ -286,6 +288,8 @@ export default class Manifest {
     ).then((res) => res.json())
 
     this.headers['Authorization'] = `Bearer ${response.token}`
+
+    return true
   }
 
   private buildUrlWithQueryParams(
