@@ -85,8 +85,6 @@ export default class Manifest {
    *
    **/
   async findOneById<T>(id: number): Promise<T> {
-    console.log(`${this.baseUrl}/${this.slug}/${id}`)
-
     return fetch(`${this.baseUrl}/${this.slug}/${id}`, {
       headers: this.headers,
       method: 'GET',
