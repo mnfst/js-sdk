@@ -4,12 +4,12 @@ import Manifest from '@mnfst/sdk'
 
 const client = new Manifest()
 
-client.login('admins', 'admin@manifest.build', 'admin')
-
-client
-  .from('cats')
-  .find()
-  .then((cats) => console.log(cats))
+client.login('admins', 'admin@manifest.build', 'admin').then((res) => {
+  client
+    .from('users')
+    .find()
+    .then((cats) => console.log(cats))
+})
 
 function App() {
   return (

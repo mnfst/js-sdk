@@ -4,8 +4,7 @@ describe('Manifest', () => {
   it('should create a new instance of the client with default values', () => {
     const manifest = new Manifest()
 
-    expect(manifest.baseUrl).toBe('http://localhost:1111/api/dynamic')
-    expect(manifest.authBaseUrl).toBe('http://localhost:1111/api/auth')
+    expect(manifest.baseUrl).toBe('http://localhost:1111/api')
   })
 
   it('should create a new instance of the client with custom values', () => {
@@ -13,8 +12,7 @@ describe('Manifest', () => {
 
     const manifest = new Manifest(`http://localhost:${customPort}`)
 
-    expect(manifest.baseUrl).toBe(`http://localhost:${customPort}/api/dynamic`)
-    expect(manifest.authBaseUrl).toBe(`http://localhost:${customPort}/api/auth`)
+    expect(manifest.baseUrl).toBe(`http://localhost:${customPort}/api`)
   })
 
   it('should set the slug of the entity to query', () => {

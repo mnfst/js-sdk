@@ -55,16 +55,9 @@ describe('Auth', () => {
   })
 
   it('should logout', async () => {
-    fetchMock.mock(
-      {
-        url: `${baseUrl}/users/logout`,
-        method: 'POST',
-      },
-      {}
-    )
-
     const manifest = new Manifest()
     manifest['headers']['Authorization'] = `Bearer ${token}`
+
     await manifest.logout()
 
     expect(manifest['headers']['Authorization']).toBeUndefined()
@@ -91,5 +84,23 @@ describe('Auth', () => {
 
     expect(response).toEqual(true)
     expect(manifest['headers']['Authorization']).toEqual(`Bearer ${token}`)
+  })
+
+  it('should return the current user', async () => {
+    fetchMock.mock(
+      {
+        url: `${baseUrl}/users/me`,
+        method: 'GET',
+      },
+      {
+        email: credentials.email,
+      }
+    )
+
+    const manifest = new Manifest()
+    manifest['headers']['Authorization'] = `Bearer ${token}`
+    const response = await manifest.from('users').me()
+
+    expect(response).toEqual({ email: credentials.email })
   })
 })

@@ -44,7 +44,8 @@
     "url": "https://github.com/casejs/case-client/issues"
   },
   "dependencies": {
-    "@mnfst/types": "^0.1.0-alpha.2"
+    "@mnfst/types": "^0.1.0-alpha.2",
+    "node-fetch": "^3.3.2"
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",

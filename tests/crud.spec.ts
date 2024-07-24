@@ -180,7 +180,7 @@ describe('CRUD operations', () => {
           url: `${baseUrl}/cats/${id}`,
           method: 'DELETE',
         },
-        200
+        {}
       )
 
       const manifest = new Manifest()

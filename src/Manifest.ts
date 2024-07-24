@@ -6,8 +6,6 @@ export default class Manifest {
    */
   baseUrl: string
 
-  authBaseUrl: string
-
   private slug: string
   private headers: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -20,8 +18,7 @@ export default class Manifest {
    * @param baseUrl The Manifest backend URL address (Without ending slash). Default: http://localhost:1111
    */
   constructor(baseUrl: string = 'http://localhost:1111') {
-    this.baseUrl = baseUrl + '/api/dynamic'
-    this.authBaseUrl = baseUrl + '/api/auth'
+    this.baseUrl = baseUrl + '/api'
     this.slug = ''
   }
 
@@ -51,27 +48,18 @@ export default class Manifest {
     perPage?: number
   }): Promise<Paginator<T>> {
     if (paginationParams) {
-      return fetch(
-        this.buildUrlWithQueryParams(`${this.baseUrl}/${this.slug}`, {
+      return this.fetch({
+        path: `/dynamic/${this.slug}`,
+        queryParams: {
           ...this.queryParams,
           ...paginationParams,
-        }),
-        {
-          headers: this.headers,
-          method: 'GET',
-        }
-      ).then((res) => res.json())
+        },
+      })
     } else {
-      return fetch(
-        this.buildUrlWithQueryParams(
-          `${this.baseUrl}/${this.slug}`,
-          this.queryParams
-        ),
-        {
-          headers: this.headers,
-          method: 'GET',
-        }
-      ).then((res) => res.json())
+      return this.fetch({
+        path: `/dynamic/${this.slug}`,
+        queryParams: this.queryParams,
+      })
     }
   }
 
@@ -85,10 +73,9 @@ export default class Manifest {
    *
    **/
   async findOneById<T>(id: number): Promise<T> {
-    return fetch(`${this.baseUrl}/${this.slug}/${id}`, {
-      headers: this.headers,
-      method: 'GET',
-    }).then((res) => res.json())
+    return this.fetch({
+      path: `/dynamic/${this.slug}/${id}`,
+    })
   }
 
   /**
@@ -99,11 +86,11 @@ export default class Manifest {
    * @returns The created item.
    */
   async create<T>(itemDto: any): Promise<T> {
-    const response = await fetch(`${this.baseUrl}/${this.slug}`, {
-      headers: this.headers,
+    const response = await this.fetch({
+      path: `/dynamic/${this.slug}`,
       method: 'POST',
-      body: JSON.stringify(itemDto),
-    }).then((res) => res.json())
+      body: itemDto,
+    })
 
     const createdItemId: number = response.identifiers[0].id
 
@@ -120,11 +107,11 @@ export default class Manifest {
    * @example client.from('cats').update(1, { name: 'updated name' });
    */
   async update<T>(id: number, itemDto: any): Promise<T> {
-    await fetch(`${this.baseUrl}/${this.slug}/${id}`, {
-      headers: this.headers,
+    await this.fetch({
+      path: `/dynamic/${this.slug}/${id}`,
       method: 'PUT',
-      body: JSON.stringify(itemDto),
-    }).then((res) => res.json())
+      body: itemDto,
+    })
 
     return this.findOneById(id)
   }
@@ -139,8 +126,8 @@ export default class Manifest {
    * @example client.from('cats').delete(1);
    */
   async delete(id: number): Promise<number> {
-    return fetch(`${this.baseUrl}/${this.slug}/${id}`, {
-      headers: this.headers,
+    return this.fetch({
+      path: `/dynamic/${this.slug}/${id}`,
       method: 'DELETE',
     }).then(() => id)
   }
@@ -236,16 +223,14 @@ export default class Manifest {
     email: string,
     password: string
   ): Promise<boolean> {
-    const response: { token: string } = await fetch(
-      `${this.authBaseUrl}/${entitySlug}/login`,
-      {
-        method: 'POST',
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-      }
-    ).then((res) => res.json())
+    const response: { token: string } = await this.fetch({
+      path: `/auth/${entitySlug}/login`,
+      method: 'POST',
+      body: {
+        email,
+        password,
+      },
+    })
 
     this.headers['Authorization'] = `Bearer ${response.token}`
 
@@ -276,32 +261,56 @@ export default class Manifest {
     email: string,
     password: string
   ): Promise<any> {
-    const response: { token: string } = await fetch(
-      `${this.authBaseUrl}/${entitySlug}/signup`,
-      {
-        method: 'POST',
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-      }
-    ).then((res) => res.json())
+    const response: { token: string } = await this.fetch({
+      path: `/auth/${entitySlug}/signup`,
+      method: 'POST',
+      body: {
+        email,
+        password,
+      },
+    })
 
     this.headers['Authorization'] = `Bearer ${response.token}`
 
     return true
   }
 
-  private buildUrlWithQueryParams(
-    baseUrl: string,
-    queryParams: Record<string, string | number | boolean>
-  ): string {
-    const url = new URL(baseUrl)
-    Object.entries(queryParams).forEach(([key, value]) => {
+  /**
+   * Gets the current logged in user (me). Use "from('your-entity')" before calling this method.
+   *
+   * @returns The current logged in user.
+   * @example client.from('users').me();
+   *
+   */
+  async me(): Promise<any> {
+    return this.fetch({
+      path: `/auth/${this.slug}/me`,
+    })
+  }
+
+  private fetch({
+    path,
+    method,
+    body,
+    queryParams,
+  }: {
+    path: string
+    method?: 'GET' | 'POST' | 'PUT' | 'DELETE'
+    body?: any
+    queryParams?: Record<string, string | number | boolean>
+  }): Promise<any> {
+    const url = new URL(this.baseUrl + path)
+
+    Object.entries(queryParams || []).forEach(([key, value]) => {
       if (value !== null && value !== undefined) {
         url.searchParams.append(key, value.toString())
       }
     })
-    return url.toString()
+
+    return fetch(url.toString(), {
+      headers: this.headers,
+      method: method || 'GET',
+      body,
+    }).then((res) => res.json())
   }
 }
