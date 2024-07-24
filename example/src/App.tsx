@@ -1,10 +1,15 @@
 import logo from './logo.svg'
-import Manifest from '@mnfst/sdk'
 import './App.css'
+import Manifest from '@mnfst/sdk'
 
-const manifest = new Manifest()
+const client = new Manifest()
 
-const cats = await manifest.from('cats').find()
+client.login('admins', 'admin@manifest.build', 'admin')
+
+client
+  .from('cats')
+  .find()
+  .then((cats) => console.log(cats))
 
 function App() {
   return (
@@ -12,7 +17,7 @@ function App() {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
-          Edit <code>src/App.js</code> and save to reload.
+          Edit <code>src/App.tsx</code> and save to reload.
         </p>
         <a
           className="App-link"

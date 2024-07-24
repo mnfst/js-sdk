@@ -3,6 +3,19 @@
 - Website: https://manifest.build
 - Documentation: https://manifest.build/docs
 
+## Example React app
+
+This repository includes a simple React app that you can use to test the JS SDK in real situation.
+
+```
+npm pack
+cd example
+npm install
+npm run start
+```
+
+Then you can play around with the file `src/App.tsx` to try different features.
+
 ## Usage
 
 Install the SDK:
