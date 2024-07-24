@@ -20,6 +20,9 @@ describe('Auth', () => {
         url: `${baseUrl}/users/login`,
         method: 'POST',
         body: credentials,
+        headers: {
+          'Content-Type': 'application/json',
+        },
       },
       {
         token: token,
@@ -42,6 +45,9 @@ describe('Auth', () => {
         url: `${baseUrl}/users/login`,
         method: 'POST',
         body: credentials,
+        headers: {
+          'Content-Type': 'application/json',
+        },
       },
       {
         token: token,
@@ -69,6 +75,9 @@ describe('Auth', () => {
         url: `${baseUrl}/users/signup`,
         method: 'POST',
         body: credentials,
+        headers: {
+          'Content-Type': 'application/json',
+        },
       },
       {
         token: token,
@@ -91,6 +100,9 @@ describe('Auth', () => {
       {
         url: `${baseUrl}/users/me`,
         method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
       },
       {
         email: credentials.email,

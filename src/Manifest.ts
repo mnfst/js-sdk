@@ -310,7 +310,7 @@ export default class Manifest {
     return fetch(url.toString(), {
       headers: this.headers,
       method: method || 'GET',
-      body,
+      body: body ? JSON.stringify(body) : undefined,
     }).then((res) => res.json())
   }
 }
