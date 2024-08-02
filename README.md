@@ -8,6 +8,8 @@
 This repository includes a simple React app that you can use to test the JS SDK in real situation.
 
 ```
+npm install
+npm run build
 npm pack
 cd example
 npm install
