@@ -1,6 +1,6 @@
 {
   "name": "@mnfst/sdk",
-  "version": "0.1.0-alpha.5",
+  "version": "0.1.0-alpha.6",
   "description": "Manifest Javascript SDK",
   "author": "Manifest",
   "homepage": "https://manifest.build",
@@ -44,12 +44,11 @@
     "url": "https://github.com/casejs/case-client/issues"
   },
   "dependencies": {
-    "@mnfst/types": "^0.1.0-alpha.2",
-    "node-fetch": "^2.7.0"
+    "@mnfst/types": "^0.1.0-alpha.2"
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",
-    "@types/node-fetch": "^2.6.9",
+    "fetch-mock": "^10.1.0",
     "jest": "^29.7.0",
     "ts-jest": "^29.1.5"
   }

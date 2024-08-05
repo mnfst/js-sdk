@@ -6,8 +6,6 @@ export default class Manifest {
    */
   baseUrl: string
 
-  authBaseUrl: string
-
   private slug: string
   private headers: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -20,8 +18,7 @@ export default class Manifest {
    * @param baseUrl The Manifest backend URL address (Without ending slash). Default: http://localhost:1111
    */
   constructor(baseUrl: string = 'http://localhost:1111') {
-    this.baseUrl = baseUrl + '/api/dynamic'
-    this.authBaseUrl = baseUrl + '/api/auth'
+    this.baseUrl = baseUrl + '/api'
     this.slug = ''
   }
 
@@ -46,32 +43,23 @@ export default class Manifest {
    *                           returns a paginated result, otherwise returns all entities.
    * @returns A Promise that resolves a Paginator object containing entities of type T, based on the input.
    */
-  find<T>(paginationParams?: {
+  async find<T>(paginationParams?: {
     page?: number
     perPage?: number
   }): Promise<Paginator<T>> {
     if (paginationParams) {
-      return fetch(
-        this.buildUrlWithQueryParams(`${this.baseUrl}/${this.slug}`, {
+      return this.fetch({
+        path: `/dynamic/${this.slug}`,
+        queryParams: {
           ...this.queryParams,
           ...paginationParams,
-        }),
-        {
-          headers: this.headers,
-          method: 'GET',
-        }
-      ).then((res) => res.json())
+        },
+      })
     } else {
-      return fetch(
-        this.buildUrlWithQueryParams(
-          `${this.baseUrl}/${this.slug}`,
-          this.queryParams
-        ),
-        {
-          headers: this.headers,
-          method: 'GET',
-        }
-      ).then((res) => res.json())
+      return this.fetch({
+        path: `/dynamic/${this.slug}`,
+        queryParams: this.queryParams,
+      })
     }
   }
 
@@ -84,11 +72,10 @@ export default class Manifest {
    * @example client.from('cats').findOne(1);
    *
    **/
-  findOneById<T>(id: number): Promise<T> {
-    return fetch(`${this.baseUrl}/${this.slug}/${id}`, {
-      headers: this.headers,
-      method: 'GET',
-    }).then((res) => res.json())
+  async findOneById<T>(id: number): Promise<T> {
+    return this.fetch({
+      path: `/dynamic/${this.slug}/${id}`,
+    })
   }
 
   /**
@@ -99,11 +86,11 @@ export default class Manifest {
    * @returns The created item.
    */
   async create<T>(itemDto: any): Promise<T> {
-    const response = await fetch(`${this.baseUrl}/${this.slug}`, {
-      headers: this.headers,
+    const response = await this.fetch({
+      path: `/dynamic/${this.slug}`,
       method: 'POST',
-      body: JSON.stringify(itemDto),
-    }).then((res) => res.json())
+      body: itemDto,
+    })
 
     const createdItemId: number = response.identifiers[0].id
 
@@ -120,11 +107,11 @@ export default class Manifest {
    * @example client.from('cats').update(1, { name: 'updated name' });
    */
   async update<T>(id: number, itemDto: any): Promise<T> {
-    await fetch(`${this.baseUrl}/${this.slug}/${id}`, {
-      headers: this.headers,
+    await this.fetch({
+      path: `/dynamic/${this.slug}/${id}`,
       method: 'PUT',
-      body: JSON.stringify(itemDto),
-    }).then((res) => res.json())
+      body: itemDto,
+    })
 
     return this.findOneById(id)
   }
@@ -138,9 +125,9 @@ export default class Manifest {
    * @returns The id of the deleted item.
    * @example client.from('cats').delete(1);
    */
-  delete(id: number): Promise<number> {
-    return fetch(`${this.baseUrl}/${this.slug}/${id}`, {
-      headers: this.headers,
+  async delete(id: number): Promise<number> {
+    return this.fetch({
+      path: `/dynamic/${this.slug}/${id}`,
       method: 'DELETE',
     }).then(() => id)
   }
@@ -229,25 +216,25 @@ export default class Manifest {
    * @param email The email of the entity to login as.
    * @param password The password of the entity to login as.
    *
-   * @returns Promise<void>
+   * @returns true if the login was successful.
    */
   async login(
     entitySlug: string,
     email: string,
     password: string
-  ): Promise<any> {
-    const response: { token: string } = await fetch(
-      `${this.authBaseUrl}/${entitySlug}/login`,
-      {
-        method: 'POST',
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-      }
-    ).then((res) => res.json())
+  ): Promise<boolean> {
+    const response: { token: string } = await this.fetch({
+      path: `/auth/${entitySlug}/login`,
+      method: 'POST',
+      body: {
+        email,
+        password,
+      },
+    })
 
     this.headers['Authorization'] = `Bearer ${response.token}`
+
+    return true
   }
 
   /**
@@ -267,37 +254,63 @@ export default class Manifest {
    * @param email The email of the entity to signup as.
    * @param password The password of the entity to signup as.
    *
-   * @returns void
+   * @returns true if the signup was successful.
    */
   async signup(
     entitySlug: string,
     email: string,
     password: string
   ): Promise<any> {
-    const response: { token: string } = await fetch(
-      `${this.authBaseUrl}/${entitySlug}/signup`,
-      {
-        method: 'POST',
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-      }
-    ).then((res) => res.json())
+    const response: { token: string } = await this.fetch({
+      path: `/auth/${entitySlug}/signup`,
+      method: 'POST',
+      body: {
+        email,
+        password,
+      },
+    })
 
     this.headers['Authorization'] = `Bearer ${response.token}`
+
+    return true
   }
 
-  private buildUrlWithQueryParams(
-    baseUrl: string,
-    queryParams: Record<string, string | number | boolean>
-  ): string {
-    const url = new URL(baseUrl)
-    Object.entries(queryParams).forEach(([key, value]) => {
+  /**
+   * Gets the current logged in user (me). Use "from('your-entity')" before calling this method.
+   *
+   * @returns The current logged in user.
+   * @example client.from('users').me();
+   *
+   */
+  async me(): Promise<any> {
+    return this.fetch({
+      path: `/auth/${this.slug}/me`,
+    })
+  }
+
+  private fetch({
+    path,
+    method,
+    body,
+    queryParams,
+  }: {
+    path: string
+    method?: 'GET' | 'POST' | 'PUT' | 'DELETE'
+    body?: any
+    queryParams?: Record<string, string | number | boolean>
+  }): Promise<any> {
+    const url = new URL(this.baseUrl + path)
+
+    Object.entries(queryParams || []).forEach(([key, value]) => {
       if (value !== null && value !== undefined) {
         url.searchParams.append(key, value.toString())
       }
     })
-    return url.toString()
+
+    return fetch(url.toString(), {
+      headers: this.headers,
+      method: method || 'GET',
+      body: body ? JSON.stringify(body) : undefined,
+    }).then((res) => res.json())
   }
 }
